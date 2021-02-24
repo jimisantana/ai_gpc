@@ -1,0 +1,10 @@
+Flask
+Flask-Cors
+pandas
+pyarrow
+numpy
+requests
+regex
+
+transformers
+torch
