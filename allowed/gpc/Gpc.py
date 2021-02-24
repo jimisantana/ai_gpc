@@ -97,7 +97,7 @@ def gpc(name: str = 'file_name_unique_without_extension', top_cat: int = -1, top
 
         try:
 
-            system(f'cd {PATH_TMP}; tar -zxvf {PATH_TMP}/{name2}.feather.tar.gz')
+            system(f'cd {PATH_TMP}; tar -zxvf {name2}.feather.tar.gz')
 
             ppath = f'{PATH_TMP}/{name2}.feather'
 
