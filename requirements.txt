@@ -1,7 +1,7 @@
 Flask
 Flask-Cors
 pandas
-pyarrow
+#pyarrow
 numpy
 requests
 regex

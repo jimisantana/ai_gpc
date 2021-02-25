@@ -96,15 +96,14 @@ def gpc(name: str = 'file_name_unique_without_extension', top_cat: int = -1, top
     def fn(name2: str = 'file_name_unique_without_extension'):
 
         try:
-
             system(f'cd {PATH_TMP}; tar -zxvf {name2}.feather.tar.gz')
 
             ppath = f'{PATH_TMP}/{name2}.feather'
 
             df = pd.read_feather(ppath)
             print(f'original len {len(df)} titles')
-            if len(df) > int(1e4):
-                df = df.sample(n=int(1e4))
+            if len(df) > int(2e5):
+                df = df.sample(n=int(2e5))
             print(f'doing inference on {len(df)} titles')
 
             with Gpc(df, top_cat, top_cat_t) as obj:
@@ -112,11 +111,6 @@ def gpc(name: str = 'file_name_unique_without_extension', top_cat: int = -1, top
                 obj.dump('end gpc instance... - we should be DONE ... maybe')
 
             print('end gpc static... - we should be DONE')
-            # df.to_feather(ppath)  # final result is in f'{PATH_TMP}/{name2}.feather'
-            # # and it's tar.gz ed
-            # system(f'cd {PATH_TMP}; tar -czvf {name2}.feather.tar.gz {name2}.feather; rm {name2}.feather')
-            #
-            # system(f'rm {PATH_TMP}/{name2}.status.*; echo "" > {PATH_TMP}/{name2}.status.ok')
 
         except:
 
@@ -189,7 +183,7 @@ class Gpc:
             batch_size=BATCH_SIZE_AKA_MAX_ROWS_PER_GUESS_TO_FIT_GPU_MEM,
             # tests
             num_workers=8,
-            # maybe this is the culprit as suggested by  user12750353
+            # maybe this is the culprit as suggested by user12750353 in stackoverflow
             # pin_memory=True
             pin_memory=False
         )
