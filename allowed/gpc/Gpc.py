@@ -19,6 +19,7 @@ BATCH_SIZE_AKA_MAX_ROWS_PER_GUESS_TO_FIT_GPU_MEM = int(4e3)
 # BATCH_SIZE_AKA_MAX_ROWS_PER_GUESS_TO_FIT_GPU_MEM = int(1e3)  # small batches
 PRINT_EVERY_N = int(1e4)
 # PRINT_EVERY_N = int(1)  # print every time
+MAX_TEST_ROWS = int(2e4)  # TODO TEMP TEST DEBUG
 
 path2here = '.'
 dict_label_iid_pkl = f'{path2here}/model_save/dict_label_iid.pkl'
@@ -102,8 +103,8 @@ def gpc(name: str = 'file_name_unique_without_extension', top_cat: int = -1, top
 
             df = pd.read_feather(ppath)
             print(f'original len {len(df)} titles')
-            if len(df) > int(2e5):
-                df = df.sample(n=int(2e5))
+            if len(df) > MAX_TEST_ROWS:
+                df = df.sample(n=MAX_TEST_ROWS)
             print(f'doing inference on {len(df)} titles')
 
             with Gpc(df, top_cat, top_cat_t) as obj:
@@ -260,14 +261,16 @@ class Gpc:
             # endregion test shuffle
 
             # region to device, where first batch is fast, next ones are slow
-            batch = tuple(t.to(device) for t in batch)  # to GPU when gpu (or CPU otherwise)
+            # there are just 3 tensors in each batch: input_ids, input_mask, labels
+            batch = tuple(t.to(device) for t in batch[:2])  # to GPU when gpu (or CPU otherwise)
             # region to device, where first batch is fast, next ones are slow
 
             # batch = list(t.to(device) for t in batch)  # no real improvement
             # batch = batch.to(device)  # nope - this is just a list
             self.dump('end to device...', i, 1)
 
-            b_input_ids, b_input_mask, b_labels = batch
+            # , b_labels - labels are not used
+            b_input_ids, b_input_mask = batch
 
             self.dump('start outputs...', i, 1)
             # torch.cuda.empty_cache()
@@ -289,7 +292,7 @@ class Gpc:
             del logits
             del b_input_ids
             del b_input_mask
-            del b_labels
+            # del b_labels
             for o in batch:
                 del o
             del batch
