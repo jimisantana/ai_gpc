@@ -232,12 +232,18 @@ class Gpc:
         # MAIN - that's what we are here for - the main GPU thing
         # =======
 
+        print()
+        print("that's what we are here for - the main GPU inference thing...")
+        print()
+
         # predictions, true_labels = [], []
         predictions = None
 
         # torch.cuda.empty_cache()
 
         for i, batch in enumerate(self.test_dataloader):
+
+            print()
 
             self.dump('start empty cache...', i, 1)
             # torch.cuda.empty_cache()
@@ -324,6 +330,9 @@ class Gpc:
     def encode_stuff(self) -> (list, list, list):
 
         # just on cpu - TODO - make on multiple cpu's
+
+        print('disregard this - this runs on CPU and should be distributed along multi CPUs')
+        print()
 
         for i, sent in enumerate(self.texts_test):
 
